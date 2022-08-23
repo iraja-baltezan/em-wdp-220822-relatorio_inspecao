@@ -1,10 +1,15 @@
 import React from 'react';
+import IRFormsPage from './pages/IRFormsPage';
 
 function App() {
   return (
-    <div>
-      Learn React
-    </div>
+    <>
+      <header>
+      Gerador de Formulários de Relatório de Inspeção
+      </header>
+
+      <IRFormsPage />
+    </>
   );
 }
 
