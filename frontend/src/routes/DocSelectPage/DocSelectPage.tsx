@@ -1,14 +1,19 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import appDb, { IDocDbRow } from '../../state/AppDb';
 
-function DocReadPage() {
+function DocSelectPage() {
     const docs = useLiveQuery(
         () => appDb.doc.toArray()
     );
+    const routeNavigate = useNavigate();
 
     const handleOnClickEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
-        console.log(event.currentTarget.dataset.id)
+        const id: string | undefined = event.currentTarget.dataset.id;
+        console.log(id)
+        if (!id) return;
+        routeNavigate(`/doc/${id}`)
     }
 
     const handleOnClickDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -22,7 +27,11 @@ function DocReadPage() {
             alert('Documento não encontrado.');
             return;
         }
-        if (doc.toDelete){
+
+        const confirmDelete = window.confirm('Deletar documento?');
+        if (!confirmDelete) return;
+
+        if (doc.toDelete) {
             await appDb.doc.delete(parseInt(id));
         }
         else {
@@ -50,14 +59,22 @@ function DocReadPage() {
         }
     }
 
+    const liStyle: React.CSSProperties = {
+        display: 'flex',
+        gap: '0.5em',
+        flexWrap: 'wrap',
+        borderBottom: '1px solid #ccc',
+        padding: '0.5rem'
+    }
+
     return (
         <section>
-            Doc read page
+            <h2>Documentos recentes</h2>
             <ul>
                 {docs
                     ?.filter(doc => !doc.toDelete)
                     .map((doc, index) => (
-                        <li key={index}>
+                        <li key={index} style={liStyle}>
                             <div>ID: {doc.id}</div>
                             <div>Data de inspeção: {doc.date}</div>
                             <div>Atualização: {doc.updatedAt}</div>
@@ -74,7 +91,7 @@ function DocReadPage() {
                 {docs
                     ?.filter(doc => doc.toDelete)
                     .map((doc, index) => (
-                        <li key={index}>
+                        <li key={index} style={liStyle}>
                             <div>ID: {doc.id}</div>
                             <div>Data de inspeção: {doc.date}</div>
                             <div>Atualização: {doc.updatedAt}</div>
@@ -91,4 +108,4 @@ function DocReadPage() {
     );
 }
 
-export default DocReadPage;
+export default DocSelectPage;

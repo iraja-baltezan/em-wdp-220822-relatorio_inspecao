@@ -1,11 +1,11 @@
 import React, { ChangeEvent, MouseEvent, useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AppContext, getDateNow, IAppContext } from '../../state/AppContextProvider';
 
 
 function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undefined }) {
     const { currentDoc } = useContext<IAppContext>(AppContext);
-
+    const routeNavigate = useNavigate();
 
     const [id, setId] = useState<number | string | undefined>(
         currentDoc.doc.id
@@ -21,7 +21,13 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
     );
 
     useEffect(() => {
-        if (!currentDocId) return;
+        if (!currentDocId) {
+            currentDoc.reset();
+            setId(currentDoc.doc.id);
+            setDate(currentDoc.doc.date ? currentDoc.doc.date : getDateNow());
+            setCompanyId(currentDoc.doc.companyId);
+            return;
+        }
         currentDoc.processing = true;
         currentDoc.readCache(currentDocId)
             .then(readCacheResult => {
@@ -63,6 +69,7 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
 
     const handleOnClickCancel = (event: MouseEvent<HTMLElement>) => {
         currentDoc.reset();
+        routeNavigate('/docs');
     }
 
     const handleOnClickCreateDoc = async (event: MouseEvent<HTMLButtonElement>) => {
@@ -74,7 +81,8 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
             return;
         }
         setId(result);
-        alert('Documento criado com sucesso no cache.')
+        alert('Documento criado com sucesso no cache.');
+        routeNavigate(`/doc/${result}`);
     }
 
     const handleOnClickUpdateDoc = async (event: MouseEvent<HTMLButtonElement>) => {
@@ -151,8 +159,13 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
                         </div>
                     )}
                 </fieldset>
-                <footer>
-                    <Link to='/' onClick={handleOnClickCancel}>Cancelar</Link>
+                <footer style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '1rem',
+                    padding: '1rem'
+                }}>
+                    <button onClick={handleOnClickCancel}>Cancelar</button>
                     {currentDoc.doc.id ? (
                         <button onClick={handleOnClickUpdateDoc}>Atualizar documento</button>
                     ) : (
