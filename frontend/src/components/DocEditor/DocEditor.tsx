@@ -87,6 +87,8 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
 
     const handleOnClickUpdateDoc = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        if (!currentDoc.doc.createdAt)
+            currentDoc.doc.createdAt = Date.now();
         const result = await currentDoc.updateCache();
         // console.log('result update', result);
         if (!result) {
