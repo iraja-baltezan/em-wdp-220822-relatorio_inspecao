@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import appDb, { IDocDbRow } from '../../state/AppDb';
+import appDb from '../../state/AppDb';
 
 function DocSelectPage() {
     const docs = useLiveQuery(
@@ -79,7 +79,7 @@ function DocSelectPage() {
                             <div>Data de inspeção: {doc.date}</div>
                             <div>Atualização: {doc.updatedAt}</div>
                             <div>Criação: {doc.createdAt}</div>
-                            <div>Empresa: {doc.companyId}</div>
+                            <div>Empresa: {doc.company?.name}</div>
                             <button data-id={doc.id} onClick={handleOnClickEdit}>Editar</button>
                             <button data-id={doc.id} onClick={handleOnClickDelete}>Deletar</button>
                         </li>
@@ -96,7 +96,7 @@ function DocSelectPage() {
                             <div>Data de inspeção: {doc.date}</div>
                             <div>Atualização: {doc.updatedAt}</div>
                             <div>Criação: {doc.createdAt}</div>
-                            <div>Empresa: {doc.companyId}</div>
+                            <div>Empresa: {doc.company?.name}</div>
                             <button data-id={doc.id} onClick={handleOnClickEdit}>Editar</button>
                             <button data-id={doc.id} onClick={handleOnClickRestore}>Restaurar</button>
                             <button data-id={doc.id} onClick={handleOnClickDelete}>Destruir</button>

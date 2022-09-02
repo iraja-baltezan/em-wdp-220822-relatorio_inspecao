@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
-import AppContextProvider from './state/AppContextProvider';
+// import AppContextProvider from './state/AppContextProvider';
+import DocContextProvider from './state/DocContextProvider';
 import routes from './routes';
 
 const root = ReactDOM.createRoot(
@@ -11,10 +12,10 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <AppContextProvider>
+    <DocContextProvider>
       <BrowserRouter>
         {routes}
       </BrowserRouter>
-    </AppContextProvider>
+    </DocContextProvider>
   </React.StrictMode>
 );
