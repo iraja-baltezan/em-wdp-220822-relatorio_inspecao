@@ -7,7 +7,7 @@ function DocEditPage() {
     const currentDocId: number | undefined =
         routeParams.id && !!parseInt(routeParams.id) ?
             parseInt(routeParams.id) : undefined;
-
+        console.log(routeParams.id)
     return (
         <main>
             Criar documento

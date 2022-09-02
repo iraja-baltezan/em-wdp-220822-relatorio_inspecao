@@ -76,14 +76,14 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
     const [actionStatus, setActionStatus] = useState<TActionStatus>({ ...defaultDocContext.actionStatus });
     const [saved, setSaved] = useState<boolean>(defaultDocContext.saved);
 
-    const reset = () => {
+    const reset = useCallback(() => {
         setDoc({ ...defaultDocContext.doc });
         setCached(defaultDocContext.cached);
         setActionStatus({ ...defaultDocContext.actionStatus });
         setSaved(defaultDocContext.saved);
-    }
+    }, []);
 
-    const createCache = (newDoc?: IDocDbRow | undefined) => {
+    const createCache = useCallback((newDoc?: IDocDbRow | undefined) => {
         if (newDoc) setDoc({ ...newDoc });
         setActionStatus({
             type: 'PENDING',
@@ -117,7 +117,7 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
                     error
                 );
             })
-    };
+    }, [doc]);
 
     const readCache = useCallback((id: number = doc.id) => {
         setActionStatus({
@@ -158,7 +158,7 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
             });
     }, [doc.id]);
 
-    const updateCache = (docToCache: IDocDbRow = { ...doc }) => {
+    const updateCache = useCallback((docToCache: IDocDbRow = { ...doc }) => {
         setActionStatus({
             type: 'PENDING',
             message: 'Atualizando o documento no cache do navegador...'
@@ -198,9 +198,9 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
                 });
                 console.log('Erro atualizar o documento no cache.', error);
             })
-    }
+    }, [doc]);
 
-    const deleteCache = (id: number | undefined = doc.id) => {
+    const deleteCache = useCallback((id: number | undefined = doc.id) => {
         setActionStatus({
             type: 'PENDING',
             message: 'Excluindo o documento do cache do navegador...'
@@ -228,8 +228,7 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
                 });
                 console.log('Erro atualizar o documento no cache.', error);
             })
-    }
-
+    }, [doc.id, reset]);
 
     return (
         <DocContext.Provider

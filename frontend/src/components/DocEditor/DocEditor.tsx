@@ -17,9 +17,13 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
         updateCache,
     } = useContext(DocContext);
 
-    useEffect(()=>{
-        readCache(currentDocId);
-    }, [currentDocId, readCache])
+    useEffect(() => {
+        console.log('before read cache', currentDocId)
+        if (currentDocId)
+            readCache(currentDocId);
+        else
+            reset();
+    }, [currentDocId, readCache, reset])
 
     const routeNavigate = useNavigate();
 

@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import appDb from '../../state/AppDb';
 
@@ -8,6 +8,10 @@ function DocSelectPage() {
         () => appDb.doc.toArray()
     );
     const routeNavigate = useNavigate();
+
+    useEffect(()=>{
+
+    })
 
     const handleOnClickEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
         const id: string | undefined = event.currentTarget.dataset.id;
@@ -63,6 +67,7 @@ function DocSelectPage() {
         display: 'flex',
         gap: '0.5em',
         flexWrap: 'wrap',
+        justifyContent: 'space-between',
         borderBottom: '1px solid #ccc',
         padding: '0.5rem'
     }
@@ -75,13 +80,21 @@ function DocSelectPage() {
                     ?.filter(doc => !doc.toDelete)
                     .map((doc, index) => (
                         <li key={index} style={liStyle}>
-                            <div>ID: {doc.id}</div>
-                            <div>Data de inspeção: {doc.date}</div>
-                            <div>Atualização: {doc.updatedAt}</div>
-                            <div>Criação: {doc.createdAt}</div>
-                            <div>Empresa: {doc.company?.name}</div>
-                            <button data-id={doc.id} onClick={handleOnClickEdit}>Editar</button>
-                            <button data-id={doc.id} onClick={handleOnClickDelete}>Deletar</button>
+                            <div>
+                                <div>
+                                    <span>ID: {doc.id}</span>
+                                    <span>Data de inspeção: {doc.date}</span>
+                                    <span>Atualização: {doc.updatedAt}</span>
+                                    <span>Criação: {doc.createdAt}</span>
+                                </div>
+                                <div>
+                                    <span>Empresa: {doc.company?.name}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <button data-id={doc.id} onClick={handleOnClickEdit}>Editar</button>
+                                <button data-id={doc.id} onClick={handleOnClickDelete}>Deletar</button>
+                            </div>
                         </li>
                     ))
                 }
@@ -92,14 +105,22 @@ function DocSelectPage() {
                     ?.filter(doc => doc.toDelete)
                     .map((doc, index) => (
                         <li key={index} style={liStyle}>
-                            <div>ID: {doc.id}</div>
-                            <div>Data de inspeção: {doc.date}</div>
-                            <div>Atualização: {doc.updatedAt}</div>
-                            <div>Criação: {doc.createdAt}</div>
-                            <div>Empresa: {doc.company?.name}</div>
-                            <button data-id={doc.id} onClick={handleOnClickEdit}>Editar</button>
-                            <button data-id={doc.id} onClick={handleOnClickRestore}>Restaurar</button>
-                            <button data-id={doc.id} onClick={handleOnClickDelete}>Destruir</button>
+                            <div>
+                                <div>
+                                    <span>ID: {doc.id}</span>
+                                    <span>Data de inspeção: {doc.date}</span>
+                                    <span>Atualização: {doc.updatedAt}</span>
+                                    <span>Criação: {doc.createdAt}</span>
+                                </div>
+                                <div>
+                                    <span>Empresa: {doc.company?.name}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <button data-id={doc.id} onClick={handleOnClickEdit}>Editar</button>
+                                <button data-id={doc.id} onClick={handleOnClickRestore}>Restaurar</button>
+                                <button data-id={doc.id} onClick={handleOnClickDelete}>Destruir</button>
+                            </div>
                         </li>
                     ))
                 }
