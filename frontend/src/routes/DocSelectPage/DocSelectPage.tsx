@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import appDb from '../../state/AppDb';
 
@@ -9,15 +9,12 @@ function DocSelectPage() {
     );
     const routeNavigate = useNavigate();
 
-    useEffect(()=>{
-
-    })
 
     const handleOnClickEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
         const id: string | undefined = event.currentTarget.dataset.id;
         console.log(id)
         if (!id) return;
-        routeNavigate(`/doc/${id}`)
+        routeNavigate(`/docs/${id}`)
     }
 
     const handleOnClickDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -32,8 +29,8 @@ function DocSelectPage() {
             return;
         }
 
-        const confirmDelete = window.confirm('Deletar documento?');
-        if (!confirmDelete) return;
+        // const confirmDelete = window.confirm('Deletar documento?');
+        // if (!confirmDelete) return;
 
         if (doc.toDelete) {
             await appDb.doc.delete(parseInt(id));

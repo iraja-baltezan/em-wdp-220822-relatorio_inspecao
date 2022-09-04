@@ -8,7 +8,7 @@ import CompanyEditor from '../CompanyEditor';
 function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undefined }) {
     const {
         doc, setDoc,
-        actionStatus,
+        actionStatus, setActionStatus,
         setCached,
         setSaved,
         reset,
@@ -17,15 +17,21 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
         updateCache,
     } = useContext(DocContext);
 
+    const routeNavigate = useNavigate();
+
     useEffect(() => {
-        console.log('before read cache', currentDocId)
         if (currentDocId)
             readCache(currentDocId);
         else
             reset();
     }, [currentDocId, readCache, reset])
 
-    const routeNavigate = useNavigate();
+    useEffect(() => {
+        if (actionStatus.type === 'OK_CREATED' && typeof actionStatus.data === 'number') {
+            setActionStatus({type: 'IDLE'})
+            routeNavigate(`/docs/${actionStatus.data}`);
+        }
+    }, [actionStatus.data, actionStatus.type, routeNavigate, setActionStatus])
 
     function handleOnChangeDate(event: ChangeEvent<HTMLInputElement>) {
         const dateInput: string = event.target.value;
@@ -35,6 +41,7 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
     }
 
     function handleOnClickCancel(event: MouseEvent<HTMLElement>) {
+        event.preventDefault();
         reset();
         routeNavigate('/docs');
     }
@@ -89,7 +96,7 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
                 padding: '1rem'
             }}>
                 <button onClick={handleOnClickCancel}>Cancelar</button>
-                {doc.id ? (
+                {doc.id && doc.id > 0 ? (
                     <button onClick={handleOnClickUpdateDoc}>Atualizar documento</button>
                 ) : (
                     <button onClick={handleOnClickCreateDoc}>Criar documento</button>

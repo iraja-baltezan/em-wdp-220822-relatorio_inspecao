@@ -12,8 +12,8 @@ const routes = (
         <Route path='/' element={<App />}>
             <Route index element={<HomePage />} />
             <Route path='/docs' element={<DocSelectPage />} />
-            <Route path='/doc/new' element={<DocEditPage />} />
-            <Route path='/doc/:id' element={<DocEditPage />} />
+            <Route path='/docs/new' element={<DocEditPage />} />
+            <Route path='/docs/:id' element={<DocEditPage />} />
             <Route path='*' element={<NoMatchPage />} />
         </Route>
     </Routes>

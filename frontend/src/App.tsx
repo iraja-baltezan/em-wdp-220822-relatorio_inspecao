@@ -4,7 +4,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 const appNavMenu = [
   { to: '/', title: 'Início' },
   { to: '/docs', title: 'Selecionar' },
-  { to: '/doc/new', title: 'Criar' },
+  { to: '/docs/new', title: 'Criar' },
 ];
 
 function App() {

@@ -7,7 +7,7 @@ export interface IConfigDbRow {
 }
 
 export interface IDocDbRow {
-    id: number;
+    id?: number;
     date: string;
     toDelete: boolean;
     createdAt: number;

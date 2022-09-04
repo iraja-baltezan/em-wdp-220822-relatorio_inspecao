@@ -2,16 +2,16 @@ import React, { createContext, FC, PropsWithChildren, useCallback, useState } fr
 import appDb, { IDocDbRow } from '../AppDb';
 import { getDateNow } from '../utils';
 
-export type TActionStatusType = 'IDLE' | 'PENDING' | 'SUCCESS' | 'FAIL'
+export type TActionStatusType = 'IDLE' | 'PENDING' | 'OK' | 'OK_CREATED' | 'FAIL'
 
 export type TActionStatus = {
     type: TActionStatusType;
-    message: string;
+    message?: string;
+    data?: number|string|undefined;
 }
 
 const defaultActionStatus: TActionStatus = {
     type: 'IDLE',
-    message: '',
 }
 
 export interface IDocContext {
@@ -38,7 +38,7 @@ export interface IDocContext {
 
 export const defaultDocContext: IDocContext = {
     doc: {
-        id: -1,
+        id: undefined,
         date: getDateNow(),
         company: {
             name: '',
@@ -84,27 +84,30 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
     }, []);
 
     const createCache = useCallback((newDoc?: IDocDbRow | undefined) => {
-        if (newDoc) setDoc({ ...newDoc });
         setActionStatus({
             type: 'PENDING',
             message: 'Criando documento no cache do navegador...'
         });
+        let cacheDoc = newDoc ? {...newDoc} : {...doc};
         setCached(false);
         setSaved(false);
-        setDoc({
-            ...doc,
+        cacheDoc = {
+            ...cacheDoc,
             createdAt: Date.now(),
             updatedAt: Date.now(),
-        })
-        appDb.doc.add({ ...doc })
+        }
+        delete cacheDoc.id;
+        appDb.doc.add({ ...cacheDoc })
             .then(result => {
+                // console.log('appDb.doc.add result', result)
                 const docId: number = result as number;
-                setDoc({ ...doc, id: !!docId ? docId : 0 });
+                console.log('doc id', docId)
                 setCached(true);
                 setSaved(false);
                 setActionStatus({
-                    type: 'SUCCESS',
-                    message: `Documento criado no cache do navegador (ID: ${doc.id})`
+                    type: 'OK_CREATED',
+                    message: `Documento criado no cache do navegador (ID: ${docId})`,
+                    data: docId,
                 });
             })
             .catch(error => {
@@ -117,9 +120,12 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
                     error
                 );
             })
+            .finally(()=>{
+                setDoc({ ...cacheDoc});
+            })
     }, [doc]);
 
-    const readCache = useCallback((id: number = doc.id) => {
+    const readCache = useCallback((id: number | undefined = doc.id) => {
         setActionStatus({
             type: 'PENDING',
             message: 'Lendo o documento do cache do navegador...'
@@ -140,7 +146,7 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
                 );
                 setActionStatus(docFromCache ?
                     {
-                        type: 'SUCCESS',
+                        type: 'OK',
                         message: 'Documento carregado com sucesso.',
                     } :
                     {
@@ -180,7 +186,7 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
                     setDoc({ ...docToCache });
                     setCached(true);
                     setActionStatus({
-                        type: 'SUCCESS',
+                        type: 'OK',
                         message: 'Documento atualizado com sucesso.',
                     });
                 }
@@ -217,7 +223,7 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
             .then(result => {
                 reset();
                 setActionStatus({
-                    type: 'SUCCESS',
+                    type: 'OK',
                     message: 'Documento excluído do cache com sucesso.',
                 });
             })
