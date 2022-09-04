@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useContext } from 'react';
 import { DocContext } from '../../state/DocContextProvider';
-
+import ImageFileInput from '../ImageFileInput';
 
 function CompanyEditor(
 ) {
@@ -77,6 +77,7 @@ function CompanyEditor(
                 <div>Imagem/Logo/Marca</div>
                 <input type="text" value={doc.company.logo} onChange={handleOnChangeLogo} />
             </label>
+            <ImageFileInput/>
         </fieldset>
     );
 }

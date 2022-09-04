@@ -12,7 +12,7 @@ function DocSelectPage() {
 
     const handleOnClickEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
         const id: string | undefined = event.currentTarget.dataset.id;
-        console.log(id)
+        // console.log(id)
         if (!id) return;
         routeNavigate(`/docs/${id}`)
     }
