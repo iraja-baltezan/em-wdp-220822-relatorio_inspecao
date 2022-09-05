@@ -1,19 +1,35 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 
 const imageMimeType = /image\/(png|jpg|jpeg|webp|gif)/i;
 
-function ImageFileInput() {
+type TImageFileInputOnChangeEvent = (fileDataUrlOutput: string | ArrayBuffer | null | undefined) => void;
+
+type TImgDimensions = { height: number, width: number };
+
+function ImageFileInput(
+    {
+        fileDataURLInput,
+        onChange
+    }: {
+        fileDataURLInput?: string | undefined,
+        onChange?: TImageFileInputOnChangeEvent
+    }
+) {
     const [file, setFile] = useState<File | null>(null);
-    const [fileDataURL, setFileDataURL] = useState<string | ArrayBuffer | null | undefined>(null);
+    const [inputKey, setInputKey] = useState<number>(1)
+    const [fileDataURLOutput, setFileDataURLOutput] = useState<string | ArrayBuffer | null | undefined>(null);
+    const [message, setMessage] = useState<string | undefined>();
+    const [dimensions, setDimensions] = useState<TImgDimensions>({ height: 0, width: 0 });
+
 
     useEffect(() => {
         let fileReader: FileReader, isCancel = false;
         if (file) {
             fileReader = new FileReader();
-            fileReader.onload = (event:ProgressEvent<FileReader>) => {
+            fileReader.onload = (event: ProgressEvent<FileReader>) => {
                 const result: string | ArrayBuffer | null | undefined = event.target?.result;
                 if (result && !isCancel) {
-                    setFileDataURL(result)
+                    setFileDataURLOutput(result)
                 }
             }
             fileReader.readAsDataURL(file);
@@ -24,35 +40,57 @@ function ImageFileInput() {
                 fileReader.abort();
             }
         }
-
     }, [file]);
 
-    useEffect(()=>{
-        console.log(typeof fileDataURL);
-        if (typeof fileDataURL !== 'string') return;
-        console.log(fileDataURL.length);
-    },[fileDataURL])
+    useEffect(() => {
+        if (!onChange) return;
+        onChange(fileDataURLOutput);
+    }, [fileDataURLOutput, onChange]);
+
+    useEffect(() => {
+        if (!fileDataURLOutput || typeof fileDataURLOutput !== 'string') {
+            setDimensions({ height: 0, width: 0 });
+            return;
+        }
+
+        const img: HTMLImageElement = document.createElement('img');
+        img.onload = function (event) {
+            setDimensions({
+                height: img.height,
+                width: img.width
+            });
+            img.remove();
+        }
+        img.src = fileDataURLOutput as string;
+    }, [fileDataURLOutput])
 
     function handleOnChangeFile(event: ChangeEvent<HTMLInputElement>) {
         const files = event.target.files;
+        setMessage('');
 
         if (!files || files.length < 1)
             return;
 
         if (files[0].size > (1024 * 1024)) {
-            const msg = 'Arquivo maior que 1MB! Selecione um arquivo menor que 1MB.';
-            alert(msg);
-            console.log(msg);
+            setMessage('Arquivo maior que 1MB! Selecione um arquivo menor que 1MB.');
             return;
         }
 
         if (!files[0].type.match(imageMimeType)) {
-            const msg = 'As imagens devem ser do tipo GIF, JPG, JPEG, PNG ou WEBP.';
-            alert(msg);
-            console.log(msg);
+            setMessage('As imagens devem ser do tipo GIF, JPG, JPEG, PNG ou WEBP.');
             return;
         }
+
+        setMessage(`Tamanho: ${files[0].size} Bytes`);
         setFile(files[0]);
+    }
+
+    function handleOnClickReset(event: MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        setMessage('');
+        setFile(null);
+        setFileDataURLOutput(undefined);
+        setInputKey(inputKey * -1);
     }
 
     return (
@@ -60,12 +98,18 @@ function ImageFileInput() {
             <input
                 type='file'
                 accept='image/*'
+                key={inputKey}
                 onChange={handleOnChangeFile}
             />
-            {fileDataURL && (
-                <img src={fileDataURL as string} alt="Preview da imagem no arquivo" />
-            )}
-
+            <button onClick={handleOnClickReset}>Reset</button>
+            <div>
+                {dimensions.height > 0 && dimensions.width > 0 && (
+                    <div>
+                        Dimensões: {dimensions.width} x {dimensions.height} px
+                    </div>
+                )}
+                {message}
+            </div>
         </div>
     );
 }

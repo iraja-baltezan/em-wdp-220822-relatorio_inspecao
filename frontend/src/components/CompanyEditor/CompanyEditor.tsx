@@ -77,7 +77,7 @@ function CompanyEditor(
                 <div>Imagem/Logo/Marca</div>
                 <input type="text" value={doc.company.logo} onChange={handleOnChangeLogo} />
             </label>
-            <ImageFileInput/>
+            <ImageFileInput onChange={(compressedFileDataURL)=>console.log(1,compressedFileDataURL)}/>
         </fieldset>
     );
 }
