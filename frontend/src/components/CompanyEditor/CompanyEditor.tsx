@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useContext, useState } from 'react';
 import { DocContext } from '../../state/DocContextProvider';
-import { getImgDimensions, TImgDimensions, urlDataCompress, urlDataDecompress } from '../../state/utils';
+import { getImgDimensions, getImgFileSize, TImgDimensions, urlDataCompress, urlDataDecompress } from '../../state/utils';
 import ImageFileInput from '../ImageFileInput';
 import { TImageFileInputOnChangeEvent, TImageFileInputOnChangeHandler } from '../ImageFileInput/ImageFileInput';
 
@@ -51,14 +51,13 @@ function CompanyEditor(
     }
 
     const handleOnChangeLogo: TImageFileInputOnChangeHandler = (event: TImageFileInputOnChangeEvent) => {
-        const { fileDataUrl, size } = event;
-        setLogoFileSize(size);
+        const { fileDataUrl } = event;
         setCached(false);
         setSaved(false);
-        getImgDimensions(fileDataUrl).then((result) => {
+        getImgDimensions(fileDataUrl).then(result => {
             setLogoDimensions(result)
-            console.log(result)
         });
+        setLogoFileSize(getImgFileSize(fileDataUrl));
         setDoc({
             ...doc,
             company: {

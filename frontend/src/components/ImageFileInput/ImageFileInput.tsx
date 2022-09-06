@@ -6,7 +6,6 @@ export type TFileDataURL = string | ArrayBuffer | null | undefined;
 
 export type TImageFileInputOnChangeEvent = {
     fileDataUrl: string | ArrayBuffer | null | undefined,
-    size?: number | undefined,
 }
 
 export type TImageFileInputOnChangeHandler = (event: TImageFileInputOnChangeEvent) => void;
@@ -27,14 +26,12 @@ export default function ImageFileInput({ onChange }: IImageFileInputProps) {
             fileDataURLOutput ?
                 {
                     fileDataUrl: fileDataURLOutput,
-                    size: file?.size,
                 } :
                 {
                     fileDataUrl: null,
-                    size: undefined,
                 }
         )
-    }, [file?.size, fileDataURLOutput, onChange]);
+    }, [fileDataURLOutput, onChange]);
 
     useEffect(() => {
         if (!changed) return;
