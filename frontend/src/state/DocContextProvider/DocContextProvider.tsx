@@ -101,7 +101,6 @@ const DocContextProvider: FC<PropsWithChildren> = ({ children }) => {
             .then(result => {
                 // console.log('appDb.doc.add result', result)
                 const docId: number = result as number;
-                console.log('doc id', docId)
                 setCached(true);
                 setSaved(false);
                 setActionStatus({

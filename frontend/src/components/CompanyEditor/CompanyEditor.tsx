@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useContext, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { DocContext } from '../../state/DocContextProvider';
 import { getImgDimensions, getImgFileSize, TImgDimensions, urlDataCompress, urlDataDecompress } from '../../state/utils';
 import ImageFileInput from '../ImageFileInput';
@@ -13,6 +13,15 @@ function CompanyEditor(
     } = useContext(DocContext);
     const [logoDimensions, setLogoDimensions] = useState<TImgDimensions | undefined>();
     const [logoFileSize, setLogoFileSize] = useState<number | undefined>();
+
+    useEffect(() => {
+        // if (!doc.company.logo) return;
+        const fileDataUrl = urlDataDecompress(doc.company.logo);
+        getImgDimensions(fileDataUrl).then(result => {
+            setLogoDimensions(result)
+        });
+        setLogoFileSize(getImgFileSize(fileDataUrl));
+    }, [doc.company.logo])
 
     function handleOnChangeName(event: ChangeEvent<HTMLInputElement>) {
         setCached(false);
@@ -54,15 +63,15 @@ function CompanyEditor(
         const { fileDataUrl } = event;
         setCached(false);
         setSaved(false);
-        getImgDimensions(fileDataUrl).then(result => {
-            setLogoDimensions(result)
-        });
-        setLogoFileSize(getImgFileSize(fileDataUrl));
+        // getImgDimensions(fileDataUrl).then(result => {
+        //     setLogoDimensions(result)
+        // });
+        // setLogoFileSize(getImgFileSize(fileDataUrl));
         setDoc({
             ...doc,
             company: {
                 ...doc.company,
-                logo: urlDataCompress( fileDataUrl ),
+                logo: urlDataCompress(fileDataUrl),
             }
         });
     }
@@ -100,7 +109,13 @@ function CompanyEditor(
                     )}
                     {!!doc.company.logo && typeof doc.company.logo === 'string' && (
                         <div>
-                            <img src={urlDataDecompress(doc.company.logo)} alt="Logo preview." />
+                            <img
+                                src={urlDataDecompress(doc.company.logo)}
+                                alt="Logo preview."
+                                style={{
+                                    maxWidth: '100%'
+                                }}
+                            />
                         </div>
                     )}
 
