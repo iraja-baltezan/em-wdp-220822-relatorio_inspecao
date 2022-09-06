@@ -1,35 +1,57 @@
-import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
 
 const imageMimeType = /image\/(png|jpg|jpeg|webp|gif)/i;
 
-type TImageFileInputOnChangeEvent = (fileDataUrlOutput: string | ArrayBuffer | null | undefined) => void;
+export type TFileDataURL = string | ArrayBuffer | null | undefined;
 
-type TImgDimensions = { height: number, width: number };
+export type TImageFileInputOnChangeEvent = {
+    fileDataUrl: string | ArrayBuffer | null | undefined,
+    size?: number | undefined,
+}
 
-function ImageFileInput(
-    {
-        fileDataURLInput,
-        onChange
-    }: {
-        fileDataURLInput?: string | undefined,
-        onChange?: TImageFileInputOnChangeEvent
-    }
-) {
+export type TImageFileInputOnChangeHandler = (event: TImageFileInputOnChangeEvent) => void;
+
+interface IImageFileInputProps {
+    onChange: TImageFileInputOnChangeHandler,
+}
+
+export default function ImageFileInput({ onChange }: IImageFileInputProps) {
     const [file, setFile] = useState<File | null>(null);
     const [inputKey, setInputKey] = useState<number>(1)
-    const [fileDataURLOutput, setFileDataURLOutput] = useState<string | ArrayBuffer | null | undefined>(null);
+    const [fileDataURLOutput, setFileDataURLOutput] = useState<TFileDataURL>(null);
     const [message, setMessage] = useState<string | undefined>();
-    const [dimensions, setDimensions] = useState<TImgDimensions>({ height: 0, width: 0 });
+    const [changed, setChanged] = useState<boolean>(false);
 
+    const change = useCallback(() => {
+        onChange(
+            fileDataURLOutput ?
+                {
+                    fileDataUrl: fileDataURLOutput,
+                    size: file?.size,
+                } :
+                {
+                    fileDataUrl: null,
+                    size: undefined,
+                }
+        )
+    }, [file?.size, fileDataURLOutput, onChange]);
 
     useEffect(() => {
-        let fileReader: FileReader, isCancel = false;
+        if (!changed) return;
+        change();
+        setChanged(false);
+    }, [change, changed])
+
+    useEffect(() => {
+        let fileReader: FileReader;
+        let isCancel = false;
         if (file) {
             fileReader = new FileReader();
             fileReader.onload = (event: ProgressEvent<FileReader>) => {
-                const result: string | ArrayBuffer | null | undefined = event.target?.result;
+                const result: TFileDataURL = event.target?.result;
                 if (result && !isCancel) {
                     setFileDataURLOutput(result)
+                    setChanged(true);
                 }
             }
             fileReader.readAsDataURL(file);
@@ -42,27 +64,6 @@ function ImageFileInput(
         }
     }, [file]);
 
-    useEffect(() => {
-        if (!onChange) return;
-        onChange(fileDataURLOutput);
-    }, [fileDataURLOutput, onChange]);
-
-    useEffect(() => {
-        if (!fileDataURLOutput || typeof fileDataURLOutput !== 'string') {
-            setDimensions({ height: 0, width: 0 });
-            return;
-        }
-
-        const img: HTMLImageElement = document.createElement('img');
-        img.onload = function (event) {
-            setDimensions({
-                height: img.height,
-                width: img.width
-            });
-            img.remove();
-        }
-        img.src = fileDataURLOutput as string;
-    }, [fileDataURLOutput])
 
     function handleOnChangeFile(event: ChangeEvent<HTMLInputElement>) {
         const files = event.target.files;
@@ -81,7 +82,6 @@ function ImageFileInput(
             return;
         }
 
-        setMessage(`Tamanho: ${files[0].size} Bytes`);
         setFile(files[0]);
     }
 
@@ -91,6 +91,7 @@ function ImageFileInput(
         setFile(null);
         setFileDataURLOutput(undefined);
         setInputKey(inputKey * -1);
+        setChanged(true);
     }
 
     return (
@@ -103,15 +104,8 @@ function ImageFileInput(
             />
             <button onClick={handleOnClickReset}>Reset</button>
             <div>
-                {dimensions.height > 0 && dimensions.width > 0 && (
-                    <div>
-                        Dimensões: {dimensions.width} x {dimensions.height} px
-                    </div>
-                )}
                 {message}
             </div>
         </div>
     );
 }
-
-export default ImageFileInput;

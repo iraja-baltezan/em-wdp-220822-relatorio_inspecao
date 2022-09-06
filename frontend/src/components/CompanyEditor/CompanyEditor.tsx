@@ -1,6 +1,8 @@
-import React, { ChangeEvent, useContext } from 'react';
+import React, { ChangeEvent, useContext, useState } from 'react';
 import { DocContext } from '../../state/DocContextProvider';
+import { getImgDimensions, TImgDimensions, urlDataCompress, urlDataDecompress } from '../../state/utils';
 import ImageFileInput from '../ImageFileInput';
+import { TImageFileInputOnChangeEvent, TImageFileInputOnChangeHandler } from '../ImageFileInput/ImageFileInput';
 
 function CompanyEditor(
 ) {
@@ -9,6 +11,8 @@ function CompanyEditor(
         setCached,
         setSaved,
     } = useContext(DocContext);
+    const [logoDimensions, setLogoDimensions] = useState<TImgDimensions | undefined>();
+    const [logoFileSize, setLogoFileSize] = useState<number | undefined>();
 
     function handleOnChangeName(event: ChangeEvent<HTMLInputElement>) {
         setCached(false);
@@ -46,14 +50,20 @@ function CompanyEditor(
         });
     }
 
-    function handleOnChangeLogo(event: ChangeEvent<HTMLInputElement>) {
+    const handleOnChangeLogo: TImageFileInputOnChangeHandler = (event: TImageFileInputOnChangeEvent) => {
+        const { fileDataUrl, size } = event;
+        setLogoFileSize(size);
         setCached(false);
         setSaved(false);
+        getImgDimensions(fileDataUrl).then((result) => {
+            setLogoDimensions(result)
+            console.log(result)
+        });
         setDoc({
             ...doc,
             company: {
                 ...doc.company,
-                logo: event.currentTarget.value
+                logo: urlDataCompress( fileDataUrl ),
             }
         });
     }
@@ -75,9 +85,28 @@ function CompanyEditor(
             </label>
             <label>
                 <div>Imagem/Logo/Marca</div>
-                <input type="text" value={doc.company.logo} onChange={handleOnChangeLogo} />
+                <ImageFileInput
+                    onChange={handleOnChangeLogo}
+                />
+                <div>
+                    {logoDimensions && (
+                        <div>
+                            Dimensões: {logoDimensions.width} x {logoDimensions.height} px
+                        </div>
+                    )}
+                    {!!logoFileSize && (
+                        <div>
+                            Tamanho de arquivo: {logoFileSize} Bytes
+                        </div>
+                    )}
+                    {!!doc.company.logo && typeof doc.company.logo === 'string' && (
+                        <div>
+                            <img src={urlDataDecompress(doc.company.logo)} alt="Logo preview." />
+                        </div>
+                    )}
+
+                </div>
             </label>
-            <ImageFileInput onChange={(compressedFileDataURL)=>console.log(1,compressedFileDataURL)}/>
         </fieldset>
     );
 }
