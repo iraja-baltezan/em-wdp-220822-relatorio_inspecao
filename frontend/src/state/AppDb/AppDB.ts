@@ -1,26 +1,5 @@
 import Dexie, { Table } from 'dexie';
-
-export interface IConfigDbRow {
-    name: string;
-    type: 'STRING' | 'NUMBER';
-    value: string | number;
-}
-
-export interface IDocDbRow {
-    id?: number;
-    date: string;
-    toDelete: boolean;
-    createdAt: number;
-    updatedAt: number;
-    company: IDocCompanyDbRow;
-}
-
-export interface IDocCompanyDbRow {
-    name: string;
-    address: string;
-    contact: string;
-    logo: string;
-}
+import { IConfigDbRow, IDocDbRow } from './types';
 
 export class AppDb extends Dexie {
     config!: Table<IConfigDbRow>;

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 // import { IDocCompanyDbRow } from '../../state/AppDb';
 import { DocContext } from '../../state/DocContextProvider';
 import CompanyEditor from '../CompanyEditor';
+import CustomersEditor from '../CustomersEditor';
 
 function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undefined }) {
     const {
@@ -28,7 +29,7 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
 
     useEffect(() => {
         if (actionStatus.type === 'OK_CREATED' && typeof actionStatus.data === 'number') {
-            setActionStatus({type: 'IDLE'})
+            setActionStatus({ type: 'IDLE' })
             routeNavigate(`/docs/${actionStatus.data}`);
         }
     }, [actionStatus.data, actionStatus.type, routeNavigate, setActionStatus])
@@ -57,6 +58,11 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
             setDoc({ ...doc, createdAt: Date.now() });
 
         updateCache();
+    }
+
+    function handleOnClickPrint(event: MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        console.log('print')
     }
 
     return (
@@ -89,6 +95,7 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
                 </label>
             </fieldset>
             <CompanyEditor />
+            <CustomersEditor />
             <footer style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -97,7 +104,10 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
             }}>
                 <button onClick={handleOnClickCancel}>Cancelar</button>
                 {doc.id && doc.id > 0 ? (
-                    <button onClick={handleOnClickUpdateDoc}>Atualizar documento</button>
+                    <>
+                        <button onClick={handleOnClickUpdateDoc}>Atualizar documento</button>
+                        <button onClick={handleOnClickPrint}>Imprimir</button>
+                    </>
                 ) : (
                     <button onClick={handleOnClickCreateDoc}>Criar documento</button>
                 )}

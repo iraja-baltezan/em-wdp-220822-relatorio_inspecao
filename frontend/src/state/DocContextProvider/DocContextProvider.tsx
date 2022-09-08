@@ -1,39 +1,10 @@
 import React, { createContext, FC, PropsWithChildren, useCallback, useState } from 'react';
 import appDb, { IDocDbRow } from '../AppDb';
 import { getDateNow } from '../utils';
-
-export type TActionStatusType = 'IDLE' | 'PENDING' | 'OK' | 'OK_CREATED' | 'FAIL'
-
-export type TActionStatus = {
-    type: TActionStatusType;
-    message?: string;
-    data?: number|string|undefined;
-}
+import { TActionStatus, IDocContext } from './types';
 
 const defaultActionStatus: TActionStatus = {
     type: 'IDLE',
-}
-
-export interface IDocContext {
-    doc: IDocDbRow;
-    setDoc: (newDoc: IDocDbRow) => void;
-
-    actionStatus: TActionStatus;
-    setActionStatus: (newStatus: TActionStatus) => void;
-
-    /** Saved to IndexedDb */
-    cached: boolean;
-    setCached: (newState: boolean) => void;
-
-    /** Saved to external file or db service */
-    saved: boolean;
-    setSaved: (newState: boolean) => void;
-
-    reset: () => void;
-    createCache: (newDoc?: IDocDbRow | undefined) => void;
-    readCache: (id: number | undefined) => void;
-    updateCache: (doc?: IDocDbRow) => void;
-    deleteCache: (id: number | undefined) => void;
 }
 
 export const defaultDocContext: IDocContext = {
@@ -46,6 +17,7 @@ export const defaultDocContext: IDocContext = {
             contact: '',
             logo: '',
         },
+        customers: [],
         createdAt: Date.now(),
         updatedAt: Date.now(),
         toDelete: false

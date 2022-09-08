@@ -1,8 +1,11 @@
 import DocContextProvider, {
     DocContext,
-    IDocContext,
     defaultDocContext,
 } from "./DocContextProvider";
+
+import {
+    IDocContext,
+} from './types'
 
 export default DocContextProvider;
 export {
