@@ -1,7 +1,6 @@
 import React, { ChangeEvent, MouseEvent, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// import { IDocCompanyDbRow } from '../../state/AppDb';
 import { DocContext } from '../../state/DocContextProvider';
 import CompanyEditor from '../CompanyEditor';
 import CustomersEditor from '../CustomersEditor';
@@ -62,7 +61,9 @@ function DocEditor({ currentDocId = undefined }: { currentDocId?: number | undef
 
     function handleOnClickPrint(event: MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
-        console.log('print')
+        if (!currentDocId) return;
+        console.log('currentDocId',currentDocId)
+        routeNavigate(`/docs/print/${currentDocId}`)
     }
 
     return (

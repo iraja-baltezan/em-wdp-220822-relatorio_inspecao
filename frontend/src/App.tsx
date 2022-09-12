@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import { DocContext } from './state/DocContextProvider';
 
 const appNavMenu = [
   { to: '/', title: 'Início' },
@@ -8,19 +9,26 @@ const appNavMenu = [
 ];
 
 function App() {
+  const { doc } = useContext(DocContext);
+
   return (
     <>
-      <header>
+      <header className='-do-not-print'>
         Gerador de Formulários de Relatório de Inspeção
-        <nav>
+        <nav
+          style={{
+            display: 'flex',
+            gap: 8,
+          }}
+        >
           {appNavMenu
             .map((item, index) => (
               <NavLink
                 key={index}
                 to={item.to}
                 style={({ isActive }) => ({
-                  textDecoration:'none',
-                  padding:'0.5em',
+                  textDecoration: 'none',
+                  padding: '0.5em',
                   borderBottom: isActive ? '1px solid #000' : 'none',
                 })}
               >
@@ -28,6 +36,18 @@ function App() {
               </NavLink>
             ))
           }
+          {doc.id && (
+            <NavLink
+              to={`/docs/print/${doc.id}`}
+              style={({ isActive }) => ({
+                textDecoration: 'none',
+                padding: '0.5em',
+                borderBottom: isActive ? '1px solid #000' : 'none',
+              })}
+            >
+              Imprimir
+            </NavLink>
+          )}
         </nav>
       </header>
 

@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
-// import AppContextProvider from './state/AppContextProvider';
 import DocContextProvider from './state/DocContextProvider';
+import ThemeProvider from './state/ThemeProvider';
 import routes from './routes';
 
 const root = ReactDOM.createRoot(
@@ -13,9 +13,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <DocContextProvider>
-      <BrowserRouter>
-        {routes}
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          {routes}
+        </BrowserRouter>
+      </ThemeProvider>
     </DocContextProvider>
   </React.StrictMode>
 );

@@ -1,4 +1,4 @@
-import { IDocDbRow, IDocInspectionDbRow } from '../AppDb';
+import { IDocCompanyDbRow, IDocDbRow, IDocInspectionDbRow } from '../AppDb';
 
 export interface IIndexedInspection {
     id: number,
@@ -8,9 +8,17 @@ export interface IIndexedInspection {
 export type TActionStatusType = 'IDLE' | 'PENDING' | 'OK' | 'OK_CREATED' | 'FAIL'
 
 export type TActionStatus = {
-    type: TActionStatusType;
-    message?: string;
-    data?: number | string | undefined;
+    type: TActionStatusType,
+    message?: string,
+    data?: number | string | undefined,
+}
+
+export type TDocHeader = {
+    id?: number,
+    date: string,
+    createdAt: number,
+    updatedAt: number,
+    company: IDocCompanyDbRow,
 }
 
 export interface IDocContext {

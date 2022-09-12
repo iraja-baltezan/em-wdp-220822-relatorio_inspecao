@@ -5,6 +5,7 @@ import App from '../App';
 import HomePage from './HomePage';
 import DocEditPage from './DocEditPage';
 import DocSelectPage from './DocSelectPage';
+import DocPrintPage from './DocPrintPage';
 import NoMatchPage from './NoMatchPage';
 
 const routes = (
@@ -14,6 +15,7 @@ const routes = (
             <Route path='/docs' element={<DocSelectPage />} />
             <Route path='/docs/new' element={<DocEditPage />} />
             <Route path='/docs/:id' element={<DocEditPage />} />
+            <Route path='/docs/print/:id' element={<DocPrintPage />} />
             <Route path='*' element={<NoMatchPage />} />
         </Route>
     </Routes>
