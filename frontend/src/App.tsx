@@ -5,6 +5,7 @@ import { createStyles } from '@mantine/core';
 
 const appNavMenu = [
   { to: '/', title: 'Início' },
+  { to: '/docs/import', title: 'Importar' },
   { to: '/docs', title: 'Selecionar' },
   { to: '/docs/new', title: 'Criar' },
 ];
