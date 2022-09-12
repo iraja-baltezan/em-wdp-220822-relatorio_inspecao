@@ -15,14 +15,9 @@ function DocExportPage() {
         readCache(parseInt(id))
     }, [doc.id, id, readCache]);
 
-    useEffect(() => {
-        console.log(doc);
-    }, [doc])
-
     const handleOnClickExport = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         const jsonString = JSON.stringify(doc, undefined, 2);
-        // console.log(jsonString);
         const link = document.createElement('a');
         link.download = 'RELATORIOS_DE_IMPRESSAO-' + doc.date + '.fri';
         const blob = new Blob([jsonString], { type: 'text/plain' });

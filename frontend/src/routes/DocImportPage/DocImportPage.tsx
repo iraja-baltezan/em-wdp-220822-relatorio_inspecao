@@ -24,7 +24,6 @@ function DocImportPage() {
     }, [actionStatus.data, actionStatus.type, routeNavigate, setActionStatus])
 
     const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
-        // console.log(event.currentTarget.value);
         const files = event.currentTarget.files;
         if (!files || files.length < 1) {
             console.log('Nenhum arquivo foi selecionado!');
@@ -32,7 +31,6 @@ function DocImportPage() {
         }
         const fileReader = new FileReader();
         fileReader.onload = evnt => {
-            // console.log('loaded', evnt.target?.result)
             if (typeof evnt.target?.result !== 'string') {
                 console.log('O conteúdo do arquivo não é um texto.');
                 return;
@@ -44,10 +42,7 @@ function DocImportPage() {
             }
             delete jsonDoc.id;
 
-            // console.log(jsonDoc)
             createCache(jsonDoc);
-            // setContentFromFile(evnt.target.result)
-
         }
         fileReader.readAsText(files[0], 'UTF-8');
     }
@@ -61,7 +56,6 @@ function DocImportPage() {
                 Por exemplo: <code>RELATORIOS_DE_IMPRESSAO-2022-09-01.json</code>
             </p>
 
-<p></p>
             <input type="file" onChange={handleChangeFile} accept=".fri" />
 
         </div>
