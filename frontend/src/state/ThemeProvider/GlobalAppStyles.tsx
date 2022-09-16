@@ -11,7 +11,7 @@ function GlobalAppStyles() {
                     }
                 },
                 'body':{
-                    backgroundColor: theme.colors['gray'][1]
+                    backgroundColor: theme.colors['gray'][theme.colorScheme==='light'?1:9]
                 },
                 '#root': {
                     display:'flex',
