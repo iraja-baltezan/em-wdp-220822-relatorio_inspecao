@@ -26,7 +26,6 @@ function DocCard({ doc, onClickEdit, onClickDelete, onClickRestore }: TDocCardPr
     const handleOnClickRestore = (event: React.MouseEvent<HTMLButtonElement>) => {
         onClickRestore(doc.id);
     }
-
     return (
         <Card
             radius='md'
@@ -50,7 +49,7 @@ function DocCard({ doc, onClickEdit, onClickDelete, onClickRestore }: TDocCardPr
                 </div>
                 <div className='info-row'>
                     <b className='type'>Data</b>
-                    <span className='value'>{(new Date(doc.date)).toLocaleDateString()}</span>
+                    <span className='value'>{(new Date(doc.date + 'T00:00:00.000')).toLocaleDateString()}</span>
                 </div>
                 <div className='info-row -compact'>
                     <b className='type'>Criação</b>
@@ -69,7 +68,7 @@ function DocCard({ doc, onClickEdit, onClickDelete, onClickRestore }: TDocCardPr
                     title={doc.toDelete ? 'Deletar' : 'Remover'}
                     variant='outline'
                     color={'red'}
-                    size={'lg'}
+                    size={36}
                 >
                     <BsTrash size={20} />
                 </ActionIcon>
@@ -82,7 +81,7 @@ function DocCard({ doc, onClickEdit, onClickDelete, onClickRestore }: TDocCardPr
                             title='Editar'
                             variant='filled'
                             color={'primary'}
-                            size={'lg'}
+                            size={36}
                         >
                             <BsPencil size={20} />
                         </ActionIcon>

@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import appDb, { IDocDbRow } from '../../state/AppDb';
-import { Badge, Tabs, Title } from '@mantine/core';
-import { BsRecycle, BsFiles } from 'react-icons/bs';
+import { Badge, Button, SegmentedControl, Tabs, Title } from '@mantine/core';
+import { BsRecycle, BsFiles, BsArrowUpShort, BsArrowDownShort } from 'react-icons/bs';
 import { useStyles } from './style';
 import DocCard from '../DocCard';
+
+type TSortDocsBy = 'DATE-NEW' | 'DATE-OLD';
 
 function DocCache() {
     const [recentDocs, setRecentDocs] = useState<IDocDbRow[]>([]);
     const [trashDocs, setTrashDocs] = useState<IDocDbRow[]>([]);
+    const [sortBy, setSortBy] = useState<TSortDocsBy>('DATE-NEW')
 
     const { classes } = useStyles();
 
@@ -19,9 +22,16 @@ function DocCache() {
 
     useEffect(() => {
         if (!docs) return;
-        setRecentDocs(docs.filter(doc => !doc.toDelete));
-        setTrashDocs(docs.filter(doc => doc.toDelete));
-    }, [docs])
+
+        const sortedDocs = [...docs];
+        if (sortBy === 'DATE-NEW')
+            sortedDocs.sort((a: IDocDbRow, b: IDocDbRow) => ((new Date(b.date)).getTime() - (new Date(a.date)).getTime()));
+        else
+            sortedDocs.sort((a: IDocDbRow, b: IDocDbRow) => ((new Date(a.date)).getTime() - (new Date(b.date)).getTime()));
+
+        setRecentDocs(sortedDocs.filter(doc => !doc.toDelete));
+        setTrashDocs(sortedDocs.filter(doc => doc.toDelete));
+    }, [docs, sortBy])
 
     const handleOnClickEdit = (id: number | undefined) => {
         if (!id) return;
@@ -68,19 +78,23 @@ function DocCache() {
         }
     }
 
+    const handleOnClickSortDate = (event: MouseEvent<HTMLButtonElement>) => {
+        setSortBy(previousValue => (previousValue === 'DATE-NEW' ? 'DATE-OLD' : 'DATE-NEW'));
+    }
+
     return (
         <section>
             <Title>
                 Documentos
             </Title>
             <p>
-                Documentos no cache deste navegador. <br/>
+                Documentos no cache deste navegador. <br />
                 Faça a exportação para não perder documentos, caso o cache do navegador seja limpo ou excluído.
             </p>
-            <Tabs defaultValue='recent' classNames={{panel:classes.TabPanel}}>
+            <Tabs defaultValue='active' classNames={{ panel: classes.TabPanel }}>
                 <Tabs.List>
                     <Tabs.Tab
-                        value='recent'
+                        value='active'
                         icon={<BsFiles size={20} />}
                         rightSection={
                             <Badge
@@ -92,7 +106,7 @@ function DocCache() {
                             </Badge>
                         }
                     >
-                        Recentes
+                        Ativos
                     </Tabs.Tab>
                     <Tabs.Tab
                         value='trash'
@@ -109,9 +123,29 @@ function DocCache() {
                     >
                         Lixeira
                     </Tabs.Tab>
+
+                    <div className={classes.TabsOptions}>
+                        <label>
+                            Ordenar:
+                        </label>
+                        <Button
+                            compact
+                            variant='default'
+                            radius='xl'
+                            onClick={handleOnClickSortDate}
+                            rightIcon={
+                                sortBy === 'DATE-NEW' ?
+                                    (<BsArrowDownShort size={20} />) :
+                                    (<BsArrowUpShort size={20} />)
+                            }
+                        >
+                            Data
+                        </Button>
+                    </div>
+
                 </Tabs.List>
 
-                <Tabs.Panel value='recent' pt='xs'>
+                <Tabs.Panel value='active' pt='xs'>
                     <div className={classes.Grid}>
                         {recentDocs
                             .map((doc, index) => (
